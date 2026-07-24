@@ -1,75 +1,181 @@
-# Deep Learning Laboratory – Experiment 1
+# Deep Learning Laboratory – Experiment 2
 
-## Single Layer Perceptron for Binary Classification
+# Multi-Layer Perceptron (MLP) for Fashion-MNIST Image Classification
 
-### Overview
+## Overview
 
-This experiment demonstrates the implementation of a **Single Layer Perceptron** from scratch using Python for binary classification. The performance of the custom implementation is compared with Scikit-learn's built-in Perceptron classifier using the Banknote Authentication dataset.
+This experiment implements a **Multi-Layer Perceptron (MLP)** using TensorFlow/Keras for multi-class image classification on the Fashion-MNIST dataset.
 
-The experiment also studies the effect of different learning rates on the convergence and classification performance of the perceptron.
+A baseline neural network is first developed and evaluated. Automated hyperparameter optimization using **Randomized Search with Cross Validation** is then performed to identify a computationally efficient model configuration.
+
+The performance of both models is compared using multiple evaluation metrics and visualizations.
 
 ---
 
 ## Objectives
 
-- Implement a Single Layer Perceptron from scratch.
-- Train the model using the Perceptron Learning Algorithm.
-- Evaluate model performance using standard classification metrics.
-- Compare the custom implementation with Scikit-learn.
-- Analyze the influence of different learning rates.
+- Build an MLP using TensorFlow/Keras.
+- Train the network on the Fashion-MNIST dataset.
+- Perform automated hyperparameter optimization.
+- Compare baseline and optimized models.
+- Evaluate classification performance using multiple metrics.
 
 ---
 
 ## Dataset
 
-**Dataset:** Banknote Authentication Dataset
+**Dataset:** Fashion-MNIST
 
 | Property | Value |
 |----------|-------|
-| Total Samples | 1372 |
-| Training Samples | 1097 |
-| Testing Samples | 275 |
-| Number of Features | 4 |
-| Classes | 2 |
-| Task | Binary Classification |
+| Training Images | 60,000 |
+| Testing Images | 10,000 |
+| Image Size | 28 × 28 |
+| Channels | 1 |
+| Input Features | 784 |
+| Number of Classes | 10 |
+| Classification Type | Multi-Class |
 
-### Features
+### Classes
 
-- Variance
-- Skewness
-- Curtosis
-- Entropy
+| Label | Class |
+|------:|-------|
+| 0 | T-shirt/Top |
+| 1 | Trouser |
+| 2 | Pullover |
+| 3 | Dress |
+| 4 | Coat |
+| 5 | Sandal |
+| 6 | Shirt |
+| 7 | Sneaker |
+| 8 | Bag |
+| 9 | Ankle Boot |
 
 ---
 
 ## Data Preprocessing
 
-- Missing value verification
-- Feature standardization using StandardScaler
-- Train-Test Split
-- Feature normalization
+- Pixel normalization
+- Flattening images from 28×28 to 784 features
+- Dataset visualization
+- Class distribution analysis
 
 ---
 
-## Model Implementation
+## Baseline Model Architecture
 
-### Custom Perceptron
+| Layer | Configuration |
+|--------|--------------|
+| Input | 784 |
+| Hidden Layer 1 | 128 Neurons (ReLU) |
+| Hidden Layer 2 | 64 Neurons (ReLU) |
+| Output | 10 Neurons (Softmax) |
 
-- Learning Algorithm
-- Weight Initialization
-- Bias Update
-- Binary Step Activation
-- Iterative Weight Optimization
+---
 
-### Scikit-learn Perceptron
+## Training Configuration
 
-Used as the baseline implementation for comparison.
+| Parameter | Value |
+|-----------|------|
+| Optimizer | Adam |
+| Learning Rate | 0.001 |
+| Loss Function | Sparse Categorical Crossentropy |
+| Epochs | 20 |
+| Batch Size | 32 |
+| Training Time | 179.96 s |
+
+---
+
+## Baseline Performance
+
+| Metric | Value |
+|---------|------:|
+| Accuracy | **88.85%** |
+| Precision | **88.93%** |
+| Recall | **88.85%** |
+| F1 Score | **88.76%** |
+
+---
+
+## Hyperparameter Optimization
+
+Randomized Search with Cross Validation was performed over the following search space.
+
+| Hyperparameter | Candidate Values |
+|---------------|-----------------|
+| Hidden Layers | 1, 2, 3 |
+| Hidden Neurons | 32, 64, 128, 256 |
+| Activation | ReLU, Sigmoid, Tanh |
+| Optimizer | SGD, Adam, RMSProp |
+| Learning Rate | 0.1, 0.01, 0.001 |
+| Batch Size | 16, 32, 64, 128 |
+| Epochs | 10, 20, 30 |
+| Dropout | 0.0, 0.2, 0.5 |
+
+---
+
+## Best Hyperparameters
+
+| Parameter | Best Value |
+|-----------|-----------|
+| Hidden Layers | 1 |
+| Hidden Neurons | 256 |
+| Activation | Sigmoid |
+| Optimizer | Adam |
+| Learning Rate | 0.001 |
+| Batch Size | 64 |
+| Epochs | 10 |
+| Dropout | 0.0 |
+| Cross Validation Accuracy | **88.11%** |
+
+---
+
+## Optimized Model Performance
+
+| Metric | Value |
+|---------|------:|
+| Accuracy | **87.67%** |
+| Precision | **87.67%** |
+| Recall | **87.67%** |
+| F1 Score | **87.56%** |
+| Training Time | **51.80 s** |
+
+---
+
+## Performance Comparison
+
+| Metric | Baseline | Optimized |
+|---------|---------:|----------:|
+| Accuracy | **88.85%** | **87.67%** |
+| Precision | **88.93%** | **87.67%** |
+| Recall | **88.85%** | **87.67%** |
+| F1 Score | **88.76%** | **87.56%** |
+| Training Time | **179.96 s** | **51.80 s** |
+
+---
+
+## Generated Visualizations
+
+The notebook generates the following plots.
+
+- Sample Fashion-MNIST Images
+- Dataset Class Distribution
+- Baseline Confusion Matrix
+- Baseline Accuracy vs Epoch
+- Baseline Loss vs Epoch
+- Optimized Confusion Matrix
+- Optimized Accuracy vs Epoch
+- Optimized Loss vs Epoch
+- Hyperparameter Search Results
+- Model Accuracy Comparison
 
 ---
 
 ## Technologies Used
 
 - Python
+- TensorFlow
+- Keras
 - NumPy
 - Pandas
 - Matplotlib
@@ -78,97 +184,36 @@ Used as the baseline implementation for comparison.
 
 ---
 
-## Performance Metrics
-
-### Custom Perceptron
-
-| Metric | Value |
-|---------|------:|
-| Accuracy | **99.27%** |
-| Precision | **100.00%** |
-| Recall | **98.36%** |
-| F1 Score | **99.17%** |
-
----
-
-### Scikit-learn Perceptron
-
-| Metric | Value |
-|---------|------:|
-| Accuracy | **100.00%** |
-
----
-
-## Learning Rate Analysis
-
-| Learning Rate | Accuracy |
-|--------------:|---------:|
-| 0.0001 | 99.27% |
-| 0.001 | 98.55% |
-| 0.01 | 98.91% |
-| 0.10 | 98.55% |
-| 0.50 | 98.91% |
-| 1.00 | 98.55% |
-
----
-
-## Experimental Results
-
-The custom implementation achieved nearly perfect classification accuracy while closely matching the performance of Scikit-learn's implementation.
-
-The model converged rapidly for lower learning rates, whereas larger learning rates introduced minor fluctuations in classification accuracy.
-
----
-
-## Generated Visualizations
-
-The notebook generates the following plots:
-
-- Dataset Distribution
-- Feature Correlation Heatmap
-- Decision Boundary
-- Confusion Matrix
-- Learning Rate Comparison
-- Accuracy Comparison
-- Weight Evolution
-- Error Curve
-- Classification Report Visualization
-- ROC Curve
-- Precision-Recall Curve
-- Feature Importance
-- Prediction Distribution
-- Training Analysis
-- Additional Experimental Graphs
-
----
-
 ## Repository Structure
 
 ```
-Experiment_1/
+Experiment_2/
 │
-├── deeplearninglab1.ipynb
+├── deeplearninglab2.ipynb
 ├── README.md
-├── Plots/
+├── MLP_Plots/
 │   ├── *.pdf
 │   └── *.png
 └── Report/
-    └── Experiment_1_Report.pdf
+    └── Experiment_2_Report.pdf
 ```
 
 ---
 
 ## Conclusion
 
-The Single Layer Perceptron successfully classified the Banknote Authentication dataset with an accuracy exceeding 99%. The experiment demonstrates that even a simple linear classifier can perform exceptionally well on linearly separable datasets.
+The baseline MLP achieved an accuracy of **88.85%** on the Fashion-MNIST dataset.
 
-Comparison with Scikit-learn validates the correctness of the custom implementation.
+Randomized Search successfully identified a simpler neural network architecture that reduced training time from **179.96 seconds** to **51.80 seconds** while maintaining competitive classification performance.
+
+The experiment demonstrates the importance of hyperparameter optimization in improving computational efficiency while preserving model accuracy.
 
 ---
 
 ## References
 
 - TensorFlow Documentation
+- Keras Documentation
+- Fashion-MNIST Dataset
 - Scikit-learn Documentation
-- UCI Machine Learning Repository
 - Deep Learning by Ian Goodfellow
