@@ -1,0 +1,581 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{graphicx}
+\graphicspath{{MLP_Plots/}}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{xcolor}
+
+\setstretch{1.25}
+
+\begin{document}
+
+\begin{titlepage}
+
+\begin{center}
+
+{\Large\textbf{SHIV NADAR UNIVERSITY CHENNAI}}
+
+\vspace{0.4cm}
+
+{\large Department of Computer Science and Engineering}
+
+\vspace{1.8cm}
+
+{\Huge\textbf{DEEP LEARNING LABORATORY}}
+
+\vspace{0.8cm}
+
+{\LARGE\textbf{Experiment 2}}
+
+\vspace{0.5cm}
+
+{\Large
+Implementation of a Multi-Layer Perceptron (MLP) for Multi-Class Image Classification 
+}
+
+\vspace{2cm}
+
+\begin{tabular}{ll}
+\textbf{Name} & : Sukesh S\\
+\textbf{Roll No} & : 24011101111\\
+\textbf{Programme} & : B.Tech Computer Science and Engineering\\
+\textbf{Semester} & : V\\
+\textbf{Course} & : Deep Learning Laboratory\\
+\textbf{Academic Year} & : 2026--2027
+\end{tabular}
+
+\vfill
+
+\end{center}
+
+\end{titlepage}
+
+\section{Aim}
+
+The objective of this experiment is to implement a Multi-Layer Perceptron (MLP) using TensorFlow/Keras for multi-class image classification on the Fashion-MNIST dataset. The experiment also aims to perform automated hyperparameter optimization using Randomized Search and compare the optimized model with the baseline implementation.
+
+\section{Background Theory}
+
+Artificial Neural Networks are machine learning models inspired by the biological nervous system. A Multi-Layer Perceptron (MLP) is one of the simplest yet most effective feed-forward neural networks used for supervised learning tasks. Unlike a single-layer perceptron, an MLP contains one or more hidden layers that enable it to learn complex nonlinear relationships between input features and target classes.
+
+Each neuron performs a weighted summation of the inputs followed by an activation function.
+
+\[
+z = Wx+b
+\]
+
+where
+
+\begin{itemize}
+\item $W$ represents the weight matrix,
+\item $x$ denotes the input vector,
+\item $b$ is the bias.
+\end{itemize}
+
+The activation of the neuron is computed as
+
+\[
+a=f(z)
+\]
+
+where $f$ is a nonlinear activation function such as ReLU, Sigmoid or Tanh.
+
+For multi-class classification, the output layer employs the Softmax activation function
+
+\[
+P(y=i)=
+\frac{e^{z_i}}
+{\sum_{j=1}^{K}e^{z_j}}
+\]
+
+which converts the network outputs into probability values whose sum equals one.
+
+Model parameters are optimized using the backpropagation algorithm together with gradient-based optimization techniques such as Adam.
+
+\section{MLP Architecture}
+
+The baseline neural network implemented in this experiment consists of the following layers.
+
+\begin{itemize}
+
+\item Input Layer
+\begin{itemize}
+\item 784 neurons
+\item Flattened $28 \times 28$ grayscale image
+\end{itemize}
+
+\item Hidden Layer 1
+\begin{itemize}
+\item 128 neurons
+\item ReLU activation
+\end{itemize}
+
+\item Hidden Layer 2
+\begin{itemize}
+\item 64 neurons
+\item ReLU activation
+\end{itemize}
+
+\item Output Layer
+\begin{itemize}
+\item 10 neurons
+\item Softmax activation
+\end{itemize}
+
+\end{itemize}
+
+The network is designed to learn meaningful representations of clothing images while maintaining computational efficiency. The hidden layers extract increasingly abstract features from the input images before the Softmax layer performs multi-class classification.
+
+\section{Activation Functions}
+
+\subsection{Rectified Linear Unit (ReLU)}
+
+The Rectified Linear Unit is defined as
+
+\[
+f(x)=\max(0,x)
+\]
+
+ReLU is widely used because it accelerates convergence, reduces the vanishing gradient problem and is computationally inexpensive.
+
+\subsection{Softmax}
+
+The Softmax activation function converts raw output scores into probability values.
+
+\[
+Softmax(z_i)=
+\frac{e^{z_i}}
+{\sum_j e^{z_j}}
+\]
+
+It is commonly used for multi-class classification problems since the predicted probabilities sum to one.
+
+\section{Loss Function}
+
+The network is trained using Sparse Categorical Cross Entropy.
+
+For each training sample,
+
+\[
+L=-\log(P_{correct})
+\]
+
+where $P_{correct}$ represents the probability assigned to the correct class. Lower loss values indicate better model performance.
+
+\section{Optimizer}
+
+The Adam optimizer is used for training because it combines momentum and adaptive learning rates.
+
+Its advantages include
+
+\begin{itemize}
+\item Faster convergence
+\item Stable optimization
+\item Automatic learning-rate adaptation
+\item Efficient training of deep neural networks
+\end{itemize}
+
+\section{Dataset Description}
+
+The Fashion-MNIST dataset is a benchmark image classification dataset developed by Zalando Research. It contains grayscale images of clothing items belonging to ten different categories and is commonly used as a replacement for the original handwritten digit MNIST dataset.
+
+\begin{table}[H]
+\centering
+\caption{Dataset Summary}
+\begin{tabular}{ll}
+\toprule
+Dataset & Fashion-MNIST\\
+Training Images & 60,000\\
+Testing Images & 10,000\\
+Image Size & $28 \times 28$ pixels\\
+Image Type & Grayscale\\
+Number of Classes & 10\\
+Input Dimension & 784 Features\\
+Task & Multi-Class Classification\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The dataset consists of ten clothing categories:
+
+\begin{enumerate}
+\item T-shirt/Top
+\item Trouser
+\item Pullover
+\item Dress
+\item Coat
+\item Sandal
+\item Shirt
+\item Sneaker
+\item Bag
+\item Ankle Boot
+\end{enumerate}
+
+Before training, all pixel values were normalized to the range $[0,1]$ by dividing each pixel intensity by 255. Every image was then flattened into a one-dimensional vector containing 784 features so that it could be processed by the fully connected layers of the Multi-Layer Perceptron.
+\section{Experimental Procedure}
+
+The implementation of the Multi-Layer Perceptron was carried out using Python and TensorFlow/Keras in Google Colab. The complete workflow followed during the experiment is summarized below.
+
+\begin{enumerate}
+
+\item Import the required libraries including TensorFlow, Keras, NumPy, Pandas, Matplotlib, Seaborn and Scikit-Learn.
+
+\item Load the Fashion-MNIST dataset directly from TensorFlow.
+
+\item Explore the dataset by displaying sample images and observing the class distribution.
+
+\item Normalize the pixel values to the range $[0,1]$.
+
+\item Flatten every $28 \times 28$ image into a one-dimensional vector containing 784 input features.
+
+\item Construct the baseline Multi-Layer Perceptron consisting of two hidden layers with ReLU activation and a Softmax output layer.
+
+\item Compile the model using the Adam optimizer together with Sparse Categorical Cross Entropy loss.
+
+\item Train the network for 20 epochs using a batch size of 32.
+
+\item Evaluate the trained model on the testing dataset.
+
+\item Compute Accuracy, Precision, Recall, F1-score and generate the confusion matrix.
+
+\item Perform automated hyperparameter optimization using Randomized Search with five-fold cross validation.
+
+\item Train the optimized model using the best hyperparameter combination.
+
+\item Compare the baseline and optimized models using various performance metrics and graphical analysis.
+
+\end{enumerate}
+
+\section{Source Code}
+
+The complete implementation of this experiment, including the notebook and generated plots, is available in the following GitHub repository.
+
+\bigskip
+
+\url{https://github.com/ssukesh182/DeeplearningLab}
+
+\section{Baseline Model Configuration}
+
+The architecture used for the baseline model is summarized below.
+
+\begin{table}[H]
+\centering
+\caption{Baseline Model Configuration}
+\begin{tabular}{ll}
+\toprule
+Parameter & Value\\
+\midrule
+Input Size & 784\\
+Hidden Layer 1 & 128 Neurons (ReLU)\\
+Hidden Layer 2 & 64 Neurons (ReLU)\\
+Output Layer & 10 Neurons (Softmax)\\
+Optimizer & Adam\\
+Learning Rate & 0.001\\
+Loss Function & Sparse Categorical Cross Entropy\\
+Batch Size & 32\\
+Epochs & 20\\
+Training Time & 179.96 seconds\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Hyperparameter Optimization}
+
+To improve the baseline model, automated hyperparameter optimization was performed using Randomized Search together with five-fold cross validation. Instead of manually selecting parameters, several combinations of network architectures and training parameters were evaluated to identify the configuration that produced the best validation performance while reducing computational cost.
+
+The search space used during optimization is shown below.
+
+\begin{table}[H]
+\centering
+\caption{Hyperparameter Search Space}
+\begin{tabular}{ll}
+\toprule
+Hyperparameter & Candidate Values\\
+\midrule
+Hidden Layers & 1, 2, 3\\
+Hidden Neurons & 32, 64, 128, 256\\
+Activation Function & ReLU, Tanh, Sigmoid\\
+Optimizer & SGD, Adam, RMSProp\\
+Learning Rate & 0.1, 0.01, 0.001\\
+Batch Size & 16, 32, 64, 128\\
+Epochs & 10, 20, 30\\
+Dropout Rate & 0.0, 0.2, 0.5\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The best combination obtained after Randomized Search is presented below.
+
+\begin{table}[H]
+\centering
+\caption{Best Hyperparameters}
+\begin{tabular}{ll}
+\toprule
+Parameter & Best Value\\
+\midrule
+Hidden Layers & 1\\
+Hidden Neurons & 256\\
+Activation Function & Sigmoid\\
+Optimizer & Adam\\
+Learning Rate & 0.001\\
+Batch Size & 64\\
+Epochs & 10\\
+Dropout & 0.0\\
+Cross Validation Accuracy & 88.11\%\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Experimental Results}
+
+The baseline model achieved good classification performance on the Fashion-MNIST testing dataset. The optimized model achieved comparable accuracy while significantly reducing the training time.
+
+\subsection{Baseline Model Performance}
+
+\begin{table}[H]
+\centering
+\caption{Baseline Model Performance}
+\begin{tabular}{lc}
+\toprule
+Metric & Value\\
+\midrule
+Accuracy & 88.85\%\\
+Precision & 88.93\%\\
+Recall & 88.85\%\\
+F1 Score & 88.76\%\\
+Training Time & 179.96 s\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Optimized Model Performance}
+
+\begin{table}[H]
+\centering
+\caption{Optimized Model Performance}
+\begin{tabular}{lc}
+\toprule
+Metric & Value\\
+\midrule
+Accuracy & 87.67\%\\
+Precision & 87.67\%\\
+Recall & 87.67\%\\
+F1 Score & 87.56\%\\
+Training Time & 51.80 s\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Baseline vs Optimized Model}
+
+\begin{table}[H]
+\centering
+\caption{Performance Comparison}
+\begin{tabular}{lcc}
+\toprule
+Metric & Baseline & Optimized\\
+\midrule
+Accuracy & 88.85\% & 87.67\%\\
+Precision & 88.93\% & 87.67\%\\
+Recall & 88.85\% & 87.67\%\\
+F1 Score & 88.76\% & 87.56\%\\
+Training Time & 179.96 s & 51.80 s\\
+Optimizer & Adam & Adam\\
+Learning Rate & 0.001 & 0.001\\
+Batch Size & 32 & 64\\
+Activation Function & ReLU & Sigmoid\\
+Hidden Layers & 2 & 1\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The baseline model achieved the highest testing accuracy of 88.85\%, whereas the optimized model achieved a slightly lower accuracy while reducing the training time by more than 70\%. The optimization process selected a simpler network architecture with fewer hidden layers, demonstrating that comparable performance can often be achieved with lower computational complexity.
+\section{Result Analysis}
+
+\subsection{Sample Fashion-MNIST Images}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{Sample_Fashion_MNIST_Images}
+\caption{Sample Images from the Fashion-MNIST Dataset}
+\end{figure}
+
+\textbf{Inference:}
+
+The figure shows representative samples from all clothing categories available in the Fashion-MNIST dataset. Although the images are only $28 \times 28$ grayscale pixels, they still preserve enough visual information for effective classification by the neural network.
+
+\vspace{0.5cm}
+
+\subsection{Class Distribution}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{Fashion_MNIST_Class_Distribution}
+\caption{Distribution of Classes in the Dataset}
+\end{figure}
+
+\textbf{Inference:}
+
+The dataset is evenly balanced across all ten classes, with each category containing nearly the same number of samples. This balanced distribution minimizes bias during training and allows the model to learn each class equally well.
+
+\vspace{0.5cm}
+
+\subsection{Baseline Model Confusion Matrix}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{Baseline_Confusion_Matrix}
+\caption{Confusion Matrix of the Baseline Model}
+\end{figure}
+
+\textbf{Inference:}
+
+Most samples lie along the diagonal, indicating correct predictions for the majority of test images. A few misclassifications occur between visually similar clothing categories such as shirts, pullovers and coats, which is expected because these classes share similar appearance.
+
+\vspace{0.5cm}
+
+\subsection{Baseline Model Accuracy}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{Baseline_Model_Accuracy_vs_Epoch}
+\caption{Baseline Model Accuracy During Training}
+\end{figure}
+
+\textbf{Inference:}
+
+Training accuracy steadily increases with each epoch before gradually converging. The smooth learning curve indicates stable optimization and demonstrates that the model successfully learns useful image features throughout training.
+
+\vspace{0.5cm}
+
+\subsection{Baseline Model Loss}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{Baseline_Model_Loss_vs_Epoch}
+\caption{Baseline Model Loss During Training}
+\end{figure}
+
+\textbf{Inference:}
+
+The training loss decreases consistently as the epochs progress. The absence of sudden fluctuations indicates stable convergence and confirms that the optimization process effectively minimizes classification error.
+
+\vspace{0.5cm}
+
+\subsection{Optimized Model Confusion Matrix}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{Optimized_Confusion_Matrix}
+\caption{Confusion Matrix of the Optimized Model}
+\end{figure}
+
+\textbf{Inference:}
+
+The optimized model also produces a strong diagonal pattern, indicating good classification accuracy. Although its overall accuracy is slightly lower than the baseline model, it maintains reliable predictions while using a simpler architecture.
+
+\vspace{0.5cm}
+
+\subsection{Optimized Model Accuracy}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{Optimized_Model_Accuracy_vs_Epoch}
+\caption{Optimized Model Accuracy During Training}
+\end{figure}
+
+\textbf{Inference:}
+
+The optimized model reaches a high accuracy within fewer training epochs. This demonstrates that the selected hyperparameters improve learning efficiency and reduce the amount of computation required.
+
+\vspace{0.5cm}
+
+\subsection{Optimized Model Loss}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{Optimized_Model_Loss_vs_Epoch}
+\caption{Optimized Model Loss During Training}
+\end{figure}
+
+\textbf{Inference:}
+
+The loss decreases rapidly during the initial epochs before stabilizing. The learning process remains smooth throughout training, indicating that the optimized configuration converges without instability.
+
+\vspace{0.5cm}
+
+\subsection{Hyperparameter Search Results}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{Hyperparameter_Search_Results}
+\caption{Performance of Different Hyperparameter Combinations}
+\end{figure}
+
+\textbf{Inference:}
+
+The Randomized Search evaluates multiple combinations of hyperparameters and identifies the configuration producing the highest validation accuracy. This automated approach removes the need for manual parameter tuning and improves the efficiency of model development.
+
+\vspace{0.5cm}
+
+\subsection{Model Accuracy Comparison}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{Model_Accuracy_Comparison}
+\caption{Comparison of Baseline and Optimized Model Accuracy}
+\end{figure}
+
+\textbf{Inference:}
+
+The baseline model achieves the highest testing accuracy of 88.85\%, while the optimized model achieves a very similar accuracy with significantly reduced training time. This demonstrates that a simpler network can often provide competitive performance with lower computational cost.
+
+\section{Discussion}
+
+The experiment successfully demonstrated the implementation of a Multi-Layer Perceptron for multi-class image classification using TensorFlow/Keras. The baseline model achieved an accuracy of 88.85\%, indicating that fully connected neural networks are capable of extracting meaningful features from grayscale clothing images.
+
+Hyperparameter optimization using Randomized Search selected a simpler architecture consisting of a single hidden layer with 256 neurons and Sigmoid activation. Although the optimized model achieved a slightly lower testing accuracy of 87.67\%, its training time was reduced from approximately 180 seconds to about 52 seconds. This shows that model optimization is not always focused on maximizing accuracy alone but also aims to improve computational efficiency.
+
+The confusion matrices reveal that most classification errors occur between visually similar clothing categories such as shirts, coats and pullovers. Overall, both models demonstrate strong generalization ability on unseen testing data.
+
+\section{Conclusion}
+
+In this experiment, a Multi-Layer Perceptron was successfully developed for Fashion-MNIST image classification using TensorFlow/Keras. The baseline model achieved an accuracy of 88.85\%, while the optimized model obtained comparable performance with substantially lower computational cost after automated hyperparameter tuning.
+
+The experiment provided practical experience in neural network construction, image preprocessing, model evaluation and hyperparameter optimization. It also demonstrated the trade-off between predictive accuracy and computational efficiency, highlighting the importance of selecting suitable model parameters for real-world deep learning applications.
+
+\section{References}
+
+\begin{enumerate}
+
+\item Ian Goodfellow, Yoshua Bengio and Aaron Courville, \textit{Deep Learning}, MIT Press.
+
+\item TensorFlow Documentation.
+
+\url{https://www.tensorflow.org}
+
+\item Keras Documentation.
+
+\url{https://keras.io}
+
+\item Fashion-MNIST Dataset.
+
+\url{https://github.com/zalandoresearch/fashion-mnist}
+
+\item Scikit-Learn Documentation.
+
+\url{https://scikit-learn.org}
+
+\end{enumerate}
+
+\end{document}

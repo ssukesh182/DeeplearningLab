@@ -1,0 +1,609 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{caption}
+\usepackage{graphicx}
+\graphicspath{{colab_pdf_plots/}}
+\usepackage{float}
+\setstretch{1.25}
+
+\begin{document}
+
+\begin{titlepage}
+\centering
+
+\vspace*{1cm}
+
+{\Large \textbf{SHIV NADAR UNIVERSITY, CHENNAI}}\\[0.4cm]
+
+{\large Department of Computer Science and Engineering}\\[1.5cm]
+
+{\Huge \textbf{DEEP LEARNING LABORATORY}}\\[0.8cm]
+
+{\LARGE \textbf{Experiment 1}}\\[0.4cm]
+
+{\Large Implementation of a Single Layer Perceptron for Binary Classification}\\[2cm]
+
+\begin{flushleft}
+\textbf{Submitted by:} Sukesh S\\[0.2cm]
+\textbf{Programme:} B.Tech Computer Science and Engineering\\[0.2cm]
+\textbf{Semester:} V\\[0.2cm]
+\textbf{Academic Year:} 2026--2027
+\end{flushleft}
+
+\vfill
+
+{\large Department of Computer Science and Engineering\\
+Shiv Nadar University Chennai}
+
+\end{titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Objective}
+
+The objectives of this experiment are:
+
+\begin{itemize}
+\item To understand the architecture and working principle of a Single Layer Perceptron.
+\item To implement the Perceptron Learning Algorithm from scratch using Python.
+\item To classify the Banknote Authentication dataset into genuine and forged classes.
+\item To evaluate the classifier using Accuracy, Precision, Recall and F1-score.
+\item To compare the custom implementation with the Scikit-Learn implementation.
+\item To analyze the effect of different learning rates on convergence.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Background Theory}
+
+Artificial Intelligence has evolved rapidly over the last few decades, with Machine Learning and Deep Learning becoming two of the most important branches. Artificial Neural Networks (ANNs) are inspired by the biological neurons present in the human brain. The simplest neural network model is the Perceptron, proposed by Frank Rosenblatt in 1958.
+
+A Single Layer Perceptron is capable of solving only linearly separable binary classification problems. Despite its simplicity, it forms the basis of modern neural networks.
+
+Each neuron receives multiple input features, multiplies them by corresponding weights, adds a bias term and passes the result through an activation function.
+
+Mathematically,
+
+\[
+z=w_1x_1+w_2x_2+\cdots+w_nx_n+b
+\]
+
+or equivalently,
+
+\[
+z=\mathbf{w}^{T}\mathbf{x}+b
+\]
+
+where
+
+\begin{itemize}
+\item $\mathbf{x}$ is the input vector
+\item $\mathbf{w}$ is the weight vector
+\item $b$ is the bias
+\item $z$ is the linear combination
+\end{itemize}
+
+The perceptron predicts the class based on the sign of $z$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Perceptron Learning Rule}
+
+Initially, the weights and bias are initialized to small random values or zeros.
+
+For every training sample,
+
+\[
+\hat y=f(z)
+\]
+
+where
+
+\[
+f(z)=
+\begin{cases}
+1,&z\ge0\\
+0,&z<0
+\end{cases}
+\]
+
+The prediction error is
+
+\[
+e=y-\hat y
+\]
+
+The parameters are updated using
+
+\[
+w_i=w_i+\eta ex_i
+\]
+
+\[
+b=b+\eta e
+\]
+
+where
+
+\begin{itemize}
+\item $\eta$ = learning rate
+\item $e$ = prediction error
+\item $x_i$ = ith feature
+\end{itemize}
+
+Training continues until convergence or until the maximum number of epochs is reached.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Activation Functions}
+
+Activation functions introduce non-linearity into neural networks.
+
+The Perceptron uses the Step activation function.
+
+\subsection{Step Function}
+
+\[
+f(x)=
+\begin{cases}
+1,&x\ge0\\
+0,&x<0
+\end{cases}
+\]
+
+Advantages:
+
+\begin{itemize}
+\item Simple
+\item Computationally inexpensive
+\item Suitable for binary classification
+\end{itemize}
+
+Disadvantages:
+
+\begin{itemize}
+\item Non-differentiable
+\item Zero gradient
+\item Cannot be used with backpropagation
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Comparison of Activation Functions}
+
+\begin{table}[H]
+\centering
+\caption{Comparison of Common Activation Functions}
+\begin{tabular}{llll}
+\toprule
+Activation & Range & Differentiable & Applications\\
+\midrule
+Step & \{0,1\} & No & Perceptron\\
+Sigmoid & (0,1) & Yes & Binary Output\\
+Tanh & (-1,1) & Yes & Hidden Layers\\
+ReLU & [0,$\infty$) & Yes & Deep Networks\\
+Leaky ReLU & (-$\infty$,$\infty$) & Yes & Avoid Dead Neurons\\
+Softmax & (0,1) & Yes & Multi-class Classification\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Dataset Description}
+
+The Banknote Authentication dataset is obtained from the UCI Machine Learning Repository.
+
+It contains statistical features extracted from wavelet transformed banknote images.
+
+\begin{table}[H]
+\centering
+\caption{Dataset Summary}
+\begin{tabular}{ll}
+\toprule
+Dataset & Banknote Authentication\\
+Number of Samples & 1372\\
+Training Samples & 1097\\
+Testing Samples & 275\\
+Number of Features & 4\\
+Number of Classes & 2\\
+Missing Values & None\\
+Normalization & StandardScaler\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The four numerical features are:
+
+\begin{enumerate}
+\item Variance
+\item Skewness
+\item Curtosis
+\item Entropy
+\end{enumerate}
+
+Target labels:
+
+\begin{itemize}
+\item 0 = Genuine Note
+\item 1 = Forged Note
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Experimental Procedure}
+
+The following procedure was carried out during the experiment.
+
+\begin{enumerate}
+\item Load the Banknote Authentication dataset.
+\item Perform Exploratory Data Analysis.
+\item Check for missing values.
+\item Normalize the features using StandardScaler.
+\item Split the dataset into training and testing sets.
+\item Initialize the perceptron weights and bias.
+\item Train the perceptron using the learning rule.
+\item Record the evolution of weights and bias.
+\item Evaluate the classifier using Accuracy, Precision, Recall and F1-score.
+\item Compare the custom implementation with Scikit-Learn.
+\item Repeat training for multiple learning rates.
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Source Code}
+
+The complete implementation is available at:
+
+\begin{center}
+\url{https://github.com/ssukesh182/DeeplearningLab}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Experimental Results}
+
+\subsection{Training Summary}
+
+\begin{table}[H]
+\centering
+\caption{Training Summary}
+\begin{tabular}{ll}
+\toprule
+Parameter & Value\\
+\midrule
+Dataset Size & 1372\\
+Training Samples & 1097\\
+Testing Samples & 275\\
+Epochs & 100\\
+Learning Rate & 0.001\\
+Best Learning Rate & 0.0001\\
+Normalization & StandardScaler\\
+Classes & 2\\
+Features & 4\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Performance Metrics}
+
+\begin{table}[H]
+\centering
+\caption{Custom Perceptron Performance}
+\begin{tabular}{lc}
+\toprule
+Metric & Value\\
+\midrule
+Accuracy & 99.27\%\\
+Precision & 100.00\%\\
+Recall & 98.36\%\\
+F1 Score & 99.17\%\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Learning Rate Comparison}
+
+\begin{table}[H]
+\centering
+\caption{Learning Rate Analysis}
+\begin{tabular}{cc}
+\toprule
+Learning Rate & Accuracy\\
+\midrule
+0.0001 & 99.27\%\\
+0.001 & 98.55\%\\
+0.01 & 98.91\%\\
+0.10 & 98.55\%\\
+0.50 & 98.91\%\\
+1.00 & 98.55\%\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Comparison with Scikit-Learn}
+
+\begin{table}[H]
+\centering
+\caption{Custom Perceptron vs Scikit-Learn}
+\begin{tabular}{lcc}
+\toprule
+Metric & Custom & Scikit-Learn\\
+\midrule
+Accuracy & 99.27\% & 100.00\%\\
+Precision & 100.00\% & 100.00\%\\
+Recall & 98.36\% & 100.00\%\\
+F1 Score & 99.17\% & 100.00\%\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Generated Plots}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Class Distribution}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{class_distribution_bar_plot.pdf}
+\caption{Class Distribution}
+\end{figure}
+
+The dataset contains an almost equal number of genuine and forged banknotes. This balanced distribution minimizes class imbalance and enables fair model training.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Feature Box Plots}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width=\linewidth]{boxplot_variance.pdf}
+\caption{Variance}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width=\linewidth]{boxplot_skewness.pdf}
+\caption{Skewness}
+\end{subfigure}
+
+\vspace{0.3cm}
+
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width=\linewidth]{boxplot_curtosis.pdf}
+\caption{Curtosis}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width=\linewidth]{boxplot_entropy.pdf}
+\caption{Entropy}
+\end{subfigure}
+
+\caption{Box Plots of Features}
+\end{figure}
+
+The box plots illustrate the spread, median and outliers for each feature. A few outliers are present, but feature normalization helps reduce their impact during training.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Feature Histograms}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{feature_distributions_histograms.pdf}
+\caption{Feature Distributions}
+\end{figure}
+
+The histograms reveal that each feature follows a different distribution. Several features show distinguishable distributions between genuine and forged banknotes.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Pair Plot}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{pair_plot_features_by_class.pdf}
+\caption{Pair Plot of Features}
+\end{figure}
+
+The pair plot demonstrates that several feature combinations provide good visual separation between the two classes, indicating that the dataset is close to being linearly separable.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Correlation Matrix}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{correlation_matrix_heatmap.pdf}
+\caption{Correlation Matrix}
+\end{figure}
+
+The heatmap shows both positive and negative correlations among features. Skewness and Curtosis exhibit a strong negative correlation while Variance has comparatively weaker correlations.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Scatter Plot: Variance vs Skewness}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{scatterplot_variance_vs_skewness.pdf}
+\caption{Variance vs Skewness}
+\end{figure}
+
+The two classes occupy different regions of the feature space, indicating that these features contribute significantly towards binary classification.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Scatter Plot: Variance vs Curtosis}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{scatterplot_variance_vs_curtosis.pdf}
+\caption{Variance vs Curtosis}
+\end{figure}
+
+A noticeable separation exists between the two classes, suggesting that the perceptron can learn an effective decision boundary using these features.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Scatter Plot: Variance vs Entropy}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{scatterplot_variance_vs_entropy.pdf}
+\caption{Variance vs Entropy}
+\end{figure}
+
+Variance and entropy together provide useful discriminatory information, although slight overlap between classes is visible.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Scatter Plot: Skewness vs Curtosis}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{scatterplot_skewness_vs_curtosis.pdf}
+\caption{Skewness vs Curtosis}
+\end{figure}
+
+The scatter plot shows a strong negative relationship between these features while maintaining good separation between genuine and forged notes.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Scatter Plot: Skewness vs Entropy}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{scatterplot_skewness_vs_entropy.pdf}
+\caption{Skewness vs Entropy}
+\end{figure}
+
+The relationship between skewness and entropy further improves visual separation, supporting the high classification accuracy achieved by the model.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Scatter Plot: Curtosis vs Entropy}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{scatterplot_curtosis_vs_entropy.pdf}
+\caption{Curtosis vs Entropy}
+\end{figure}
+
+This feature pair also demonstrates distinguishable clusters corresponding to the two output classes, making it suitable for binary classification.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Weight Evolution}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{weight_evolution.pdf}
+\caption{Weight Evolution during Training}
+\end{figure}
+
+The weights gradually stabilize as training progresses, indicating convergence of the perceptron learning algorithm.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Bias Evolution}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{bias_evolution.pdf}
+\caption{Bias Evolution during Training}
+\end{figure}
+
+The bias value converges smoothly over successive epochs, demonstrating stable optimization during training.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Learning Rate Analysis}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{misclassified_samples_per_epoch_learning_rates.pdf}
+\caption{Misclassified Samples for Different Learning Rates}
+\end{figure}
+
+Lower learning rates produce smoother convergence, whereas larger learning rates converge more aggressively and may exhibit fluctuations before stabilizing.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Discussion}
+
+The implemented perceptron achieved excellent classification performance on the Banknote Authentication dataset with an accuracy of 99.27\%. Since the dataset is nearly linearly separable, the perceptron successfully learned an effective decision boundary. Feature normalization improved convergence and ensured stable parameter updates throughout training.
+
+The comparison with Scikit-Learn confirmed that the manually implemented perceptron performs almost identically to the optimized library implementation, validating the correctness of the implementation.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Additional Questions}
+
+\subsection*{1. Compare Step and Sigmoid Activation Functions}
+
+The Step activation function produces binary outputs and is suitable only for simple perceptrons. The Sigmoid activation function is continuous and differentiable, making it compatible with gradient-based optimization algorithms.
+
+\subsection*{2. Why is the Step Function not used in Deep Learning?}
+
+The Step function has zero gradient almost everywhere and is non-differentiable at zero. Consequently, gradients cannot propagate through multiple layers, making backpropagation impossible.
+
+\subsection*{3. Comparison with Scikit-Learn}
+
+The custom implementation provides insight into the underlying learning algorithm, whereas the Scikit-Learn implementation is highly optimized and intended for practical machine learning applications.
+
+\subsection*{4. Effect of Learning Rate}
+
+Smaller learning rates result in slower but more stable convergence, while larger learning rates may overshoot the optimal solution and require additional iterations to stabilize.
+
+\subsection*{5. Why can't a Single Layer Perceptron solve XOR?}
+
+The XOR problem is not linearly separable, meaning that no single straight-line decision boundary can correctly classify all samples. Multi-layer neural networks overcome this limitation.
+
+\subsection*{6. Effect of Feature Normalization}
+
+Feature normalization scales all input features to comparable ranges, resulting in faster convergence, improved numerical stability and more consistent weight updates.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Conclusion}
+
+This experiment successfully demonstrated the implementation of a Single Layer Perceptron from scratch for binary classification. The model achieved an accuracy of 99.27\% on the Banknote Authentication dataset and produced performance comparable to the Scikit-Learn implementation. The experiment also highlighted the importance of feature normalization, learning rate selection and exploratory data analysis in achieving high classification performance.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{References}
+
+\begin{enumerate}
+
+\item Frank Rosenblatt, \textit{The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain}, 1958.
+
+\item Ian Goodfellow, Yoshua Bengio and Aaron Courville, \textit{Deep Learning}, MIT Press.
+
+\item Simon Haykin, \textit{Neural Networks and Learning Machines}.
+
+\item UCI Machine Learning Repository — Banknote Authentication Dataset.
+
+\item Scikit-Learn Documentation.
+
+\end{enumerate}
+
+\end{document}
