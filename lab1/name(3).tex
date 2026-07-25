@@ -34,7 +34,8 @@
 {\Large Implementation of a Single Layer Perceptron for Binary Classification}\\[2cm]
 
 \begin{flushleft}
-\textbf{Submitted by:} Sukesh S\\[0.2cm]
+\textbf{Name:} Sukesh S\\[0.2cm]
+\textbf{Roll No:} 24011101111\\[0.2cm]
 \textbf{Programme:} B.Tech Computer Science and Engineering\\[0.2cm]
 \textbf{Semester:} V\\[0.2cm]
 \textbf{Academic Year:} 2026--2027
@@ -589,6 +590,170 @@ Feature normalization scales all input features to comparable ranges, resulting 
 This experiment successfully demonstrated the implementation of a Single Layer Perceptron from scratch for binary classification. The model achieved an accuracy of 99.27\% on the Banknote Authentication dataset and produced performance comparable to the Scikit-Learn implementation. The experiment also highlighted the importance of feature normalization, learning rate selection and exploratory data analysis in achieving high classification performance.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ============================================================
+% Perceptron Implementation of Logic Gates (AND, OR, NOT)
+% Paste this section into the main report .tex file.
+% Attach the following PDFs in the same folder as the .tex file:
+%   - and_gate_updates.pdf
+%   - or_gate_updates.pdf
+%   - not_gate_updates.pdf
+% Requires: \usepackage{graphicx}, \usepackage{booktabs}
+% ============================================================
+
+\section{Perceptron-Based Implementation of Logic Gates}
+
+\subsection{Theory}
+
+The perceptron is the simplest form of an artificial neural network, introduced by
+Rosenblatt (1958), consisting of a single McCulloch--Pitts neuron with adjustable
+weights and a bias term. Given an input vector $\mathbf{x} = (x_1, x_2, \dots, x_n)$,
+the neuron computes a weighted sum
+\begin{equation}
+    z = \mathbf{w}^{\top}\mathbf{x} + b = \sum_{i=1}^{n} w_i x_i + b
+\end{equation}
+and passes it through the Heaviside step activation function
+\begin{equation}
+    f(z) =
+    \begin{cases}
+        1, & z \geq 0 \\
+        0, & z < 0
+    \end{cases}
+\end{equation}
+to produce the predicted output $\hat{y} = f(z)$.
+
+The weights and bias are learned using the \textbf{Perceptron Learning Rule}. For
+each training sample $(\mathbf{x}_i, y_i)$, the prediction error is computed as
+$e = y_i - \hat{y}_i$, and if $e \neq 0$ the parameters are updated as
+\begin{align}
+    \mathbf{w} &\leftarrow \mathbf{w} + \eta \, e \, \mathbf{x}_i \\
+    b &\leftarrow b + \eta \, e
+\end{align}
+where $\eta$ is the learning rate (taken as $\eta = 1$ here). Training proceeds
+epoch by epoch over the full dataset until an epoch produces zero errors, at which
+point the decision boundary $\mathbf{w}^{\top}\mathbf{x} + b = 0$ correctly
+separates all classes. Since a single perceptron realizes a linear decision
+boundary, it can only learn \textit{linearly separable} functions -- which is why
+it succeeds on AND, OR, and NOT, but cannot learn XOR.
+
+Weights were initialized to zero ($\mathbf{w} = \mathbf{0}$, $b = 0$) and the
+network was trained for a maximum of 10 epochs on each gate's truth table.
+
+\subsection{Results}
+
+Table~\ref{tab:gate_summary} summarizes the final learned parameters and the
+number of weight updates required for convergence on each gate.
+
+\begin{table}[h!]
+    \centering
+    \caption{Convergence summary for the perceptron on basic logic gates}
+    \label{tab:gate_summary}
+    \begin{tabular}{lcccc}
+        \toprule
+        Gate & Epochs to Converge & Total Updates & Final Weights ($\mathbf{w}$) & Final Bias ($b$) \\
+        \midrule
+        AND & 5 & 11 & $[2.0,\ 1.0]$  & $-3$ \\
+        OR  & 3 & 5  & $[1.0,\ 1.0]$  & $-1$ \\
+        NOT & 2 & 2  & $[-1.0]$       & $0$  \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsubsection{AND Gate}
+
+\begin{table}[h!]
+    \centering
+    \caption{Weight updates during perceptron training for the AND gate}
+    \label{tab:and_updates}
+    \small
+    \begin{tabular}{cccccccc}
+        \toprule
+        Update & Epoch & Input $(x_1,x_2)$ & Target & Predicted & Error & Updated $\mathbf{w}$ & Updated $b$ \\
+        \midrule
+        1  & 1 & (0,0) & 0 & 1 & $-1$ & (0.0, 0.0) & $-1$ \\
+        2  & 1 & (1,1) & 1 & 0 & $+1$ & (1.0, 1.0) & $0$  \\
+        3  & 2 & (0,0) & 0 & 1 & $-1$ & (1.0, 1.0) & $-1$ \\
+        4  & 2 & (0,1) & 0 & 1 & $-1$ & (1.0, 0.0) & $-2$ \\
+        5  & 2 & (1,1) & 1 & 0 & $+1$ & (2.0, 1.0) & $-1$ \\
+        6  & 3 & (0,1) & 0 & 1 & $-1$ & (2.0, 0.0) & $-2$ \\
+        7  & 3 & (1,0) & 0 & 1 & $-1$ & (1.0, 0.0) & $-3$ \\
+        8  & 3 & (1,1) & 1 & 0 & $+1$ & (2.0, 1.0) & $-2$ \\
+        9  & 4 & (1,0) & 0 & 1 & $-1$ & (1.0, 1.0) & $-3$ \\
+        10 & 4 & (1,1) & 1 & 0 & $+1$ & (2.0, 2.0) & $-2$ \\
+        11 & 5 & (0,1) & 0 & 1 & $-1$ & (2.0, 1.0) & $-3$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{and_gate_updates.pdf}
+    \caption{Evolution of the decision boundary across successive weight updates for the AND gate }
+    \label{fig:and_updates}
+\end{figure}
+
+\clearpage
+
+\subsubsection{OR Gate}
+
+\begin{table}[h!]
+    \centering
+    \caption{Weight updates during perceptron training for the OR gate}
+    \label{tab:or_updates}
+    \small
+    \begin{tabular}{cccccccc}
+        \toprule
+        Update & Epoch & Input $(x_1,x_2)$ & Target & Predicted & Error & Updated $\mathbf{w}$ & Updated $b$ \\
+        \midrule
+        1 & 1 & (0,0) & 0 & 1 & $-1$ & (0.0, 0.0) & $-1$ \\
+        2 & 1 & (0,1) & 1 & 0 & $+1$ & (0.0, 1.0) & $0$  \\
+        3 & 2 & (0,0) & 0 & 1 & $-1$ & (0.0, 1.0) & $-1$ \\
+        4 & 2 & (1,0) & 1 & 0 & $+1$ & (1.0, 1.0) & $0$  \\
+        5 & 3 & (0,0) & 0 & 1 & $-1$ & (1.0, 1.0) & $-1$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{or_gate_updates.pdf}
+    \caption{Evolution of the decision boundary across successive weight updates for the OR gate (file: }
+    \label{fig:or_updates}
+\end{figure}
+
+\subsubsection{NOT Gate}
+
+\begin{table}[h!]
+    \centering
+    \caption{Weight updates during perceptron training for the NOT gate}
+    \label{tab:not_updates}
+    \small
+    \begin{tabular}{cccccccc}
+        \toprule
+        Update & Epoch & Input $(x_1)$ & Target & Predicted & Error & Updated $w$ & Updated $b$ \\
+        \midrule
+        1 & 1 & (1) & 0 & 1 & $-1$ & $-1.0$ & $-1$ \\
+        2 & 2 & (0) & 1 & 0 & $+1$ & $-1.0$ & $0$  \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{not_gate_updates.pdf}
+    \caption{Evolution of the decision boundary across successive weight updates for the NOT gate (file: \texttt{not\_gate\_updates.pdf})}
+    \label{fig:not_updates}
+\end{figure}
+
+\subsection{Observations}
+
+In all three cases the perceptron converges within a few epochs since AND, OR, and
+NOT are linearly separable functions, each requiring only a single straight-line
+(or, for NOT, a single point) decision boundary. The AND gate takes the largest
+number of updates (11 across 5 epochs) since only one of the four input
+combinations is positive, requiring the boundary to shift further to correctly
+isolate $(1,1)$. The OR gate converges faster (5 updates, 3 epochs) as three of the
+four combinations are positive. The NOT gate, having only two single-dimensional
+inputs, converges in just 2 updates.
 
 \section{References}
 
